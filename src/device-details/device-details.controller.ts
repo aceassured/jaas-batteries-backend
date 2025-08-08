@@ -49,11 +49,6 @@ export class DeviceDetailsController {
   //   );
   // }
 
-  @Get('fetch-devices/:userId')
-  async fetchAllDevices(@Param('userId', ParseIntPipe) userId: number) {
-    return this.deviceDetailsService.fetchAllDeviceDetails(userId);
-  }
-
   @Post('create-complaint')
   async createComplaint(@Body() dto: CreateDeviceComplaintDto) {
     return this.deviceDetailsService.createComplaint(dto);
@@ -69,5 +64,15 @@ export class DeviceDetailsController {
     return this.deviceDetailsService.registerDevice(qrCodeId,userId)
   }
 
+  @Get('fetch-devices/:userId')
+  async fetchAllDevices(@Param('userId', ParseIntPipe) userId: number) {
+    return this.deviceDetailsService.fetchAllDeviceDetails(userId);
+  }
+
+  
+  @Get('fetch-device-details/:id')
+  async fetchSpecificDeviceDetails(@Param('id', ParseIntPipe) id: number) {
+    return this.deviceDetailsService.fetchingSpecificDeviceDetails(id)
+  }
 
 }

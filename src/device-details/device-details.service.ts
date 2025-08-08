@@ -55,6 +55,28 @@ export class DeviceDetailsService {
             id,
           },
         },
+        select:{
+          id:true,
+          purchasedDate:true,
+          createdAt:true,
+          updatedAt:true,
+          userId:true,
+          batteryId:true,
+          battery:{
+            select:{
+              id:true,
+              qr_code_id:true,
+              model_name:true,
+              capacity_ah:true,
+              voltage:true,
+              technology:true,
+              warranty_months:true,
+              description:true,
+              createdAt:true,
+              updatedAt:true
+            }
+          }
+        }
       });
 
       return {
@@ -170,6 +192,40 @@ export class DeviceDetailsService {
       return {message:'New battery registed successfully!'}
     } catch (error) {
      catchBlock(error)
+    }
+  }
+
+  async fetchingSpecificDeviceDetails(id:number) {
+    try {
+      const device = await this.prisma.qrDeviceInfo.findFirst({
+        where:{
+          id:id
+        },
+        select:{
+          id:true,
+          purchasedDate:true,
+          createdAt:true,
+          updatedAt:true,
+          userId:true,
+          batteryId:true,
+          battery:{
+            select:{
+              id:true,
+              qr_code_id:true,
+              model_name:true,
+              capacity_ah:true,
+              voltage:true,
+              technology:true,
+              warranty_months:true,
+              description:true,
+              createdAt:true,
+              updatedAt:true
+            }
+          }
+        }
+      })
+    } catch (err) {
+      
     }
   }
 
