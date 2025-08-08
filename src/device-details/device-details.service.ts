@@ -224,8 +224,10 @@ export class DeviceDetailsService {
           }
         }
       })
+
+      return { message : `Fetched the details of the produtct ${device?.battery.qr_code_id}`,device}
     } catch (err) {
-      
+      catchBlock(err)
     }
   }
 
