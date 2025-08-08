@@ -1,0 +1,4 @@
+export const WHITELISTED_NUMBERS = [
+  '+919182320883',
+  '+918072515731',
+];

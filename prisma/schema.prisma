@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// schema.prisma
+
+model User {
+  id               Int               @id @default(autoincrement())
+  phone            String            @unique
+  otp              String?
+  otpExpiresAt     DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  QrDevices        QrDeviceInfo[]
+  DeviceComplaints DeviceComplaint[]
+}
+
+model QrDeviceInfo {
+  id            Int      @id @default(autoincrement())
+  purchasedDate DateTime @default(now())
+
+  // Relation to User
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  batteryId Int
+  battery   Battery @relation(fields: [batteryId], references: [id], onDelete: Cascade)
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  DeviceComplaints DeviceComplaint[]
+}
+
+model DeviceComplaint {
+  id       Int @id @default(autoincrement())
+  userId   Int
+  deviceId Int
+
+  complaintType String // e.g., "Battery issue", "Charging problem"
+  description   String? // Optional additional description from user
+  status        String    @default("Pending") // "Pending", "In Progress", "Resolved", "Rejected"
+  raisedAt      DateTime  @default(now())
+  resolvedAt    DateTime? // Set when resolved
+
+  // Optional admin or system-assigned ticket ID or reference number
+  ticketNumber String? @unique
+
+  // Relation fields
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device QrDeviceInfo @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Battery {
+  id              Int            @id @default(autoincrement())
+  qr_code_id      String         @unique
+  model_name      String?
+  product_type    String?
+  capacity_ah     Int?
+  voltage         String?
+  technology      String?
+  warranty_months Int?
+  description     String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  qrDevices       QrDeviceInfo[]
+}
