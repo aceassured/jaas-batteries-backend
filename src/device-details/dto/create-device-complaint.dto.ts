@@ -23,12 +23,4 @@ export class CreateDeviceComplaintDto {
   @IsNotEmpty()
   @IsString()
   description: string;
-
-  @IsNotEmpty()
-  @IsString()
-  serialNumber: string;
-
-  @IsNotEmpty()
-  @IsDateString()
-  purchaseDate: string;
 }

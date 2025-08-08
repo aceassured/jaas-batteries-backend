@@ -95,7 +95,6 @@ export class DeviceDetailsService {
         deviceId,
         complaintType,
         description,
-        serialNumber,
       } = dto;
 
       // 1. Verify device with serialNumber & purchaseDate
@@ -114,7 +113,7 @@ export class DeviceDetailsService {
       // 2. Generate unique ticket number
       const timestamp = Date.now().toString().slice(-6);
       const suffix = uuidv4().slice(0, 5).toUpperCase();
-      const ticketNumber = `TICKET-${serialNumber.slice(-4)}-${timestamp}-${suffix}`;
+      const ticketNumber = `TICKET-${deviceId.toString().slice(-4)}-${timestamp}-${suffix}`;
 
       // 3. Save complaint
       const complaint = await this.prisma.deviceComplaint.create({
