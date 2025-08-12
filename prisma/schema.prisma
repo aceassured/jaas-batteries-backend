@@ -18,6 +18,10 @@ datasource db {
 model User {
   id               Int               @id @default(autoincrement())
   phone            String            @unique
+  name String?
+  email String?
+  address String?
+  about String?
   otp              String?
   otpExpiresAt     DateTime?
   createdAt        DateTime          @default(now())

@@ -1,8 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import * as twilio from 'twilio';
 import { PrismaService } from '../prisma/prisma.service';
 import * as dotenv from 'dotenv';
 import { WHITELISTED_NUMBERS } from '../common/whitelist';
+import { catchBlock } from 'src/common/catch-block';
+import { CreateUserDto } from './dto/user-dto';
 
 @Injectable()
 export class AuthService {
@@ -115,7 +117,7 @@ export class AuthService {
       if (user.otp !== otp) {
         return {
           success: false,
-          message: 'Invalid OTP. Please try again.',
+          message: 'Invalid OTP. Please try again.'
         };
       }
   
@@ -131,6 +133,7 @@ export class AuthService {
       return {
         success: true,
         message: 'OTP verified successfully',
+        user
       };
     } catch (error) {
       this.logger.error(`OTP verification failed: ${error.message}`, error.stack);
@@ -139,6 +142,39 @@ export class AuthService {
         error: error.message,
       };
     }
-  }  
+  }
+
+  async fetchingUserDetails(id:number) {
+    try {
+      const user = await this.prisma.user.findFirst({where:{id:id}}) || (()=>{throw new BadRequestException('No user found with the ID')})()
+
+      return {
+        message:'Showing the logged user details',
+        user
+      }
+    } catch (err) {
+      catchBlock(err)
+    }
+  }
+
+  async editUserDetails(id:number,dto:CreateUserDto) {
+    try {
+      await this.prisma.user.findFirst({where:{id:id}}) || (()=>{throw new BadRequestException('No user found with the ID')})()
+
+      await this.prisma.user.update({where:{id:id},data:{
+        name:dto?.name,
+        email:dto?.email,
+        address:dto?.address,
+        about:dto?.about
+      }})
+
+      return {
+        message:'User details updated successfully',
+        user:await this.prisma.user.findFirst({where:{id}})
+      }
+    } catch (err) {
+      catchBlock(err)
+    }
+  }
 
 }
