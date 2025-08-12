@@ -161,13 +161,17 @@ export class AuthService {
     try {
       await this.prisma.user.findFirst({where:{id:id}}) || (()=>{throw new BadRequestException('No user found with the ID')})()
 
-      await this.prisma.user.update({where:{id:id},data:{
+     await this.prisma.user.update({
+      where:{
+        id:id
+      },
+      data:{
+        name:dto?.name,
         email:dto?.email,
         address:dto?.address,
-        about:dto?.about,
-        name:dto?.name
-      }})
-
+        about:dto?.about
+      }
+     })
       return {
         message:'User details updated successfully',
         user:await this.prisma.user.findFirst({where:{id}})
